@@ -27,32 +27,90 @@
  * SOFTWARE.
  */
 
-#ifndef BIGFIXSTATS_H_
-#define BIGFIXSTATS_H_
+#ifndef BIGFIX_BIGFIXSTATS_H_
+#define BIGFIX_BIGFIXSTATS_H_
+
+#include <string>
 
 /**
- *  @brief Model class for BigFix deployment information, following the
- *         model-view-controller software design pattern
- *  @details BigFixStats contains all the operations and attributes associated
- *           with the deployment information for all computer groups
+ *  @brief Model class for BigFix deployment information for a single computer
+ *         group, following the model-view-controller software design pattern
+ *  @details ComputerGroup contains all the operations and attributes associated
+ *           with the deployment information for a single computer groups
  */
-class BigFixStats {
+class ComputerGroup {
+ private:
+  /**
+   *  @brief Name of this computer group
+   */
+  std::string name_;
+
+  /**
+   *  @brief Number of computers currently in this computer group
+   */
+  uint16_t current_ {0};
+
+  /**
+   *  @brief Number of computers expected to be in this computer group
+   */
+  uint16_t target_ {0};
+
+ public:
+  /**
+   *  @brief Accessor method for the name_ property
+   *  @retval std::string Name of this computer group
+   */
+  std::string name() const;
+
+  /**
+   *  @brief Accessor method for the current_ property
+   *  @retval uint16_t Number of computers currently in this computer group
+   */
+  uint16_t current() const;
+
+  /**
+   *  @brief Accessor method for the target_ property
+   *  @retval uint16_t Number of computers expected to be in this computer group
+   */
+  uint16_t target() const;
+
+  /**
+   *  @brief Accessor method for the deployment percentage computed value
+   *  @retval uint8_t Percentage of computers deployed in this computer group
+   */
+  uint8_t percent() const;
+
+  /**
+   *  @brief Mutator method for the name_ property
+   *  @param name Name of this computer group
+   */
+  void set_name(std::string name);
+
+  /**
+   *  @brief Mutator method for the current_ property
+   *  @param uint16_t Number of computers currently in this computer group
+   */
+  void set_current(uint16_t current);
+
+  /**
+   *  @brief Mutator method for the target_ property
+   *  @param uint16_t Number of computers expected to be in this computer group
+   */
+  void set_target(uint16_t target);
 };
 
 /**
  *  @brief BigFix Statistics namespace for library-wide constants
  */
 namespace bf {
-  
   /** program name */
   const std::string kProgramName {"bfstats"};
-  
+
   /** program major revision number */
-  const int kMajorVersion {1};
-  
+  const uint8_t kMajorVersion {1};
+
   /** program minor revision number */
-  const int kMinorVersion {0};
-  
+  const uint8_t kMinorVersion {0};
 }
 
 /**
@@ -60,4 +118,4 @@ namespace bf {
  */
 void usage();
 
-#endif // BIGFIXSTATS_H_
+#endif  // BIGFIX_BIGFIXSTATS_H_

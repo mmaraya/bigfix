@@ -27,7 +27,6 @@
  * SOFTWARE.
  */
 
-#include <iostream>
 #include <string>
 #include <vector>
 #include "bigfix/bigfixstats.h"
@@ -53,13 +52,13 @@ int main(int argc, const char * argv[]) {
     return 0;
   }
   // use -i input file
-  std::string device_name {};
+  std::string infile {};
   it = find(args.begin(), args.end(), "-i");
   if (it != args.end()) {
     if (next(it) != args.end()) {
-      device_name = *next(it);
+      infile = *next(it);
     } else {
-      std::cout << bf::kProgramName << ": option -i requires an argument\n";
+      printf("%s: option -i requires an argument\n", bf::kProgramName.c_str());
       usage();
       return 1;
     }
@@ -70,11 +69,9 @@ int main(int argc, const char * argv[]) {
  *  @details Display program name, version, and usage
  */
 void usage() {
-  std::cout << bf::kProgramName << ", version " << bf::kMajorVersion << '.';
-  std::cout << bf::kMinorVersion << "\n\n";
-  std::cout << "usage: " << bf::kProgramName;
-  std::cout << " [-hv] [-i filename]\n";
-  std::cout << "-h display usage\n";
-  std::cout << "-i filename\n";
-  std::cout << std::endl;
+  printf("%s, version %u.%u\n\n", bf::kProgramName.c_str(), bf::kMajorVersion,
+         bf::kMinorVersion);
+  printf("usage: %s [-h] [-i filename]\n", bf::kProgramName.c_str());
+  printf("-h display usage\n");
+  printf("-i filename\n\n");
 }
