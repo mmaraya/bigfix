@@ -28,6 +28,7 @@
  */
 
 #include <algorithm>
+#include <fstream>
 #include <string>
 #include <vector>
 #include "bigfix/bigfixstats.h"
@@ -63,6 +64,19 @@ int main(int argc, const char * argv[]) {
       usage();
       return 1;
     }
+  }
+  // open input file
+  std::ifstream fs(infile);
+  if (fs.is_open()) {
+    std::string line {};
+    while (std::getline(fs, line)) {
+      if (line.compare(0, bf::kStart.length(), bf::kStart) == 0) {
+      }
+    }
+    fs.close();
+  } else {
+    printf("Error: Could not open file %s", infile.c_str());
+    return 1;
   }
 }
 

@@ -111,6 +111,9 @@ namespace bf {
 
   /** program minor revision number */
   const uint8_t kMinorVersion {0};
+  
+  /** text that indicates the start of line for our data */
+  const std::string kStart {"<tr><td>"};
 }
 
 /**
