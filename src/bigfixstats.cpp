@@ -27,6 +27,7 @@
  * SOFTWARE.
  */
 
+#include <algorithm>
 #include <string>
 #include <vector>
 #include "bigfix/bigfixstats.h"
@@ -46,14 +47,14 @@ int main(int argc, const char * argv[]) {
     args.push_back(argv[i]);
   }
   // display -h help
-  it = find(args.begin(), args.end(), "-h");
+  it = std::find(args.begin(), args.end(), "-h");
   if ((argc == 1) || (it != args.end())) {
     usage();
     return 0;
   }
   // use -i input file
   std::string infile {};
-  it = find(args.begin(), args.end(), "-i");
+  it = std::find(args.begin(), args.end(), "-i");
   if (it != args.end()) {
     if (next(it) != args.end()) {
       infile = *next(it);
