@@ -33,6 +33,34 @@
 #include <vector>
 #include "bigfix/bigfixstats.h"
 
+std::string ComputerGroup::name() const {
+  return name_;
+}
+
+uint16_t ComputerGroup::current() const {
+  return current_;
+}
+
+uint16_t ComputerGroup::target() const {
+  return target_;
+}
+
+uint8_t ComputerGroup::percent() const {
+  return current_ / target_ * 100;
+}
+
+void ComputerGroup::set_name(std::string name) {
+  name_ = name;
+}
+
+void ComputerGroup::set_current(uint16_t current) {
+  current_ = current;
+}
+
+void ComputerGroup::set_target(uint16_t target) {
+  target_ = target;
+}
+
 /**
  *  @brief Converts BigFix deployment reports into text for updating Atlassian 
  *         Confluence tables
@@ -66,6 +94,7 @@ int main(int argc, const char * argv[]) {
     }
   }
   // open input file
+  std::vector<ComputerGroup> groups;
   std::ifstream fs(infile);
   if (fs.is_open()) {
     std::string line {};
@@ -74,7 +103,8 @@ int main(int argc, const char * argv[]) {
         // read records
         std::size_t start = line.find(bf::kStart, 0), end {0};
         while (start != std::string::npos) {
-          std::string group {}, count {};
+          uint16_t count {0};
+          std::string group {}, current {};
           // read computer group
           end = line.find(bf::kEnd, start);
           if (end != std::string::npos) {
@@ -87,9 +117,16 @@ int main(int argc, const char * argv[]) {
           end = line.find(bf::kEnd, start);
           if (end != std::string::npos) {
             start += bf::kStart.length();
-            count = line.substr(start, end - start);
-            printf("Count: %s\n", count.c_str());
+            current = line.substr(start, end - start);
+            count = std::stoi(current);
+            printf("Count: %s\n", current.c_str());
           }
+          // create new computer group
+          ComputerGroup cg = ComputerGroup();
+          cg.set_name(group);
+          cg.set_current(count);
+          groups.push_back(cg);
+          // read next computer group
           start = line.find(bf::kStart, start + bf::kStart.length());
         }
       }
@@ -99,6 +136,12 @@ int main(int argc, const char * argv[]) {
     printf("Error: Could not open file %s", infile.c_str());
     return 1;
   }
+  // compute total
+  uint16_t total {0};
+  for (auto cg : groups) {
+    total += cg.current();
+  }
+  printf("Total: %d\n", total);
 }
 
 /**
