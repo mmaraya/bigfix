@@ -70,7 +70,28 @@ int main(int argc, const char * argv[]) {
   if (fs.is_open()) {
     std::string line {};
     while (std::getline(fs, line)) {
-      if (line.compare(0, bf::kStart.length(), bf::kStart) == 0) {
+      if (line.compare(0, bf::kRecord.length(), bf::kRecord) == 0) {
+        // read records
+        std::size_t start = line.find(bf::kStart, 0), end {0};
+        while (start != std::string::npos) {
+          std::string group {}, count {};
+          // read computer group
+          end = line.find(bf::kEnd, start);
+          if (end != std::string::npos) {
+            start += bf::kStart.length();
+            group = line.substr(start, end - start);
+            printf("Group: %s\t", group.c_str());
+          }
+          // read computer count
+          start = line.find(bf::kStart, start + bf::kStart.length());
+          end = line.find(bf::kEnd, start);
+          if (end != std::string::npos) {
+            start += bf::kStart.length();
+            count = line.substr(start, end - start);
+            printf("Count: %s\n", count.c_str());
+          }
+          start = line.find(bf::kStart, start + bf::kStart.length());
+        }
       }
     }
     fs.close();

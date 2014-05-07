@@ -111,10 +111,16 @@ namespace bf {
 
   /** program minor revision number */
   const uint8_t kMinorVersion {0};
-  
-  /** text that indicates the start of line for our data */
-  const std::string kStart {"<tr><td>"};
-}
+
+  /** text that indicates a line contains our records */
+  const std::string kRecord {"<tr>"};
+
+  /** text that indicates the start of a record */
+  const std::string kStart {"<td>"};
+
+  /** text that indicates the end of a record */
+  const std::string kEnd {"</td>"};
+}  // namespace bf
 
 /**
  *  @brief Display command-line program usage and options
