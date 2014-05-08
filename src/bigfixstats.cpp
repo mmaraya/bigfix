@@ -46,7 +46,11 @@ uint16_t ComputerGroup::target() const {
 }
 
 uint8_t ComputerGroup::percent() const {
-  return current_ / target_ * 100;
+  if (target_ != 0) {
+    return current_ / target_ * 100;
+  } else {
+    return 0;
+  }
 }
 
 void ComputerGroup::set_name(std::string name) {
@@ -146,16 +150,27 @@ void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups) {
  *  @details Display computer group, current, target and percentage
  */
 void display(std::vector<ComputerGroup>* groups) {
-  uint16_t total {0};
-  std::string header = "| ", count = "| ";
+  uint16_t currentTotal {0}, targetTotal {0}, percentTotal {0};
+  std::string header = "| ", current = "| ", target = "| ", percent = "| ";
   for (auto cg : *groups) {
     header += cg.name() + " | ";
-    count += std::to_string(cg.current()) + " | ";
-    total += cg.current();
+    current += std::to_string(cg.current()) + " | ";
+    target += std::to_string(cg.target()) + " | ";
+    percent += std::to_string(cg.percent()) + " | ";
+    currentTotal += cg.current();
+    targetTotal += cg.target();
   }
   header += " TOTAL |";
-  count += std::to_string(total) + " | ";
-  printf("%s\n%s\n", header.c_str(), count.c_str());
+  current += std::to_string(currentTotal) + " |";
+  target += std::to_string(targetTotal) + " |";
+  if (targetTotal != 0) {
+    percentTotal = static_cast<uint16_t>(currentTotal / targetTotal * 100);
+  } else {
+    percentTotal = 0;
+  }
+  percent += std::to_string(percentTotal) + " |";
+  printf("%s\n%s\n%s\n%s\n", header.c_str(), current.c_str(), target.c_str(),
+         percent.c_str());
 }
 
 /**
