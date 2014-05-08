@@ -93,20 +93,9 @@ int main(int argc, const char * argv[]) {
       return 1;
     }
   }
-  // load current deployment counts
   std::vector<ComputerGroup> groups;
   loadCurrent(infile, &groups);
-  // display deployment counts and compute total
-  uint16_t total {0};
-  std::string header = "| ", count = "| ";
-  for (auto cg : groups) {
-    header += cg.name() + " | ";
-    count += std::to_string(cg.current()) + " | ";
-    total += cg.current();
-  }
-  header += " TOTAL |";
-  count += std::to_string(total) + " | ";
-  printf("%s\n%s\n", header.c_str(), count.c_str());
+  display(&groups);
 }
 
 /**
@@ -151,6 +140,22 @@ void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups) {
   } else {
     printf("Error: Could not open file %s", filename.c_str());
   }
+}
+
+/**
+ *  @details Display computer group, current, target and percentage
+ */
+void display(std::vector<ComputerGroup>* groups) {
+  uint16_t total {0};
+  std::string header = "| ", count = "| ";
+  for (auto cg : *groups) {
+    header += cg.name() + " | ";
+    count += std::to_string(cg.current()) + " | ";
+    total += cg.current();
+  }
+  header += " TOTAL |";
+  count += std::to_string(total) + " | ";
+  printf("%s\n%s\n", header.c_str(), count.c_str());
 }
 
 /**

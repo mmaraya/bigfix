@@ -135,5 +135,9 @@ void usage();
  */
 void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups);
 
+/**
+ *  @brief Display output for pasting into Confluence
+ */
+void display(std::vector<ComputerGroup>* groups);
 
 #endif  // BIGFIX_BIGFIXSTATS_H_
