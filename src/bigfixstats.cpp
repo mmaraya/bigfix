@@ -96,12 +96,17 @@ int main(int argc, const char * argv[]) {
   // load current deployment counts
   std::vector<ComputerGroup> groups;
   loadCurrent(infile, &groups);
-  // compute total
+  // display deployment counts and compute total
   uint16_t total {0};
+  std::string header = "| ", count = "| ";
   for (auto cg : groups) {
+    header += cg.name() + " | ";
+    count += std::to_string(cg.current()) + " | ";
     total += cg.current();
   }
-  printf("Total: %d\n", total);
+  header += " TOTAL |";
+  count += std::to_string(total) + " | ";
+  printf("%s\n%s\n", header.c_str(), count.c_str());
 }
 
 /**
