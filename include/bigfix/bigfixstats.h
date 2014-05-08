@@ -31,6 +31,7 @@
 #define BIGFIX_BIGFIXSTATS_H_
 
 #include <string>
+#include <vector>
 
 /**
  *  @brief Model class for BigFix deployment information for a single computer
@@ -126,5 +127,13 @@ namespace bf {
  *  @brief Display command-line program usage and options
  */
 void usage();
+
+/**
+ *  @brief Load current information from input file
+ *  @param std::string filename input file containing current status
+ *  @param std::vector<ComputerGroup>* groups vector of computer groups
+ */
+void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups);
+
 
 #endif  // BIGFIX_BIGFIXSTATS_H_

@@ -28,7 +28,7 @@
  */
 
 #include <algorithm>
-#include <fstream>
+#include <fstream>  // NOLINT
 #include <string>
 #include <vector>
 #include "bigfix/bigfixstats.h"
@@ -93,9 +93,22 @@ int main(int argc, const char * argv[]) {
       return 1;
     }
   }
-  // open input file
+  // load current deployment counts
   std::vector<ComputerGroup> groups;
-  std::ifstream fs(infile);
+  loadCurrent(infile, &groups);
+  // compute total
+  uint16_t total {0};
+  for (auto cg : groups) {
+    total += cg.current();
+  }
+  printf("Total: %d\n", total);
+}
+
+/**
+ *  @details Load computer groups and current deployment counts
+ */
+void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups) {
+  std::ifstream fs(filename);
   if (fs.is_open()) {
     std::string line {};
     while (std::getline(fs, line)) {
@@ -110,7 +123,6 @@ int main(int argc, const char * argv[]) {
           if (end != std::string::npos) {
             start += bf::kStart.length();
             group = line.substr(start, end - start);
-            printf("Group: %s\t", group.c_str());
           }
           // read computer count
           start = line.find(bf::kStart, start + bf::kStart.length());
@@ -119,13 +131,12 @@ int main(int argc, const char * argv[]) {
             start += bf::kStart.length();
             current = line.substr(start, end - start);
             count = std::stoi(current);
-            printf("Count: %s\n", current.c_str());
           }
           // create new computer group
           ComputerGroup cg = ComputerGroup();
           cg.set_name(group);
           cg.set_current(count);
-          groups.push_back(cg);
+          groups->push_back(cg);
           // read next computer group
           start = line.find(bf::kStart, start + bf::kStart.length());
         }
@@ -133,15 +144,8 @@ int main(int argc, const char * argv[]) {
     }
     fs.close();
   } else {
-    printf("Error: Could not open file %s", infile.c_str());
-    return 1;
+    printf("Error: Could not open file %s", filename.c_str());
   }
-  // compute total
-  uint16_t total {0};
-  for (auto cg : groups) {
-    total += cg.current();
-  }
-  printf("Total: %d\n", total);
 }
 
 /**
