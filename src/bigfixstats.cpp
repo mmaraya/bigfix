@@ -85,21 +85,40 @@ int main(int argc, const char * argv[]) {
     usage();
     return 0;
   }
-  // use -i input file
-  std::string infile {};
-  it = std::find(args.begin(), args.end(), "-i");
+  // use -c current file
+  std::string current_file {};
+  it = std::find(args.begin(), args.end(), "-c");
   if (it != args.end()) {
     if (next(it) != args.end()) {
-      infile = *next(it);
+      current_file = *next(it);
     } else {
-      printf("%s: option -i requires an argument\n", bf::kProgramName.c_str());
+      printf("%s: option -c requires an argument\n", bf::kProgramName.c_str());
+      usage();
+      return 1;
+    }
+  }
+  // use -t target file
+  std::string target_file {};
+  it = std::find(args.begin(), args.end(), "-t");
+  if (it != args.end()) {
+    if (next(it) != args.end()) {
+      target_file = *next(it);
+    } else {
+      printf("%s: option -t requires an argument\n", bf::kProgramName.c_str());
       usage();
       return 1;
     }
   }
   std::vector<ComputerGroup> groups;
-  loadCurrent(infile, &groups);
+  loadTarget(target_file, &groups);
+  loadCurrent(current_file, &groups);
   display(&groups);
+}
+
+/**
+ *  @details Load computer groups and target deployment counts
+ */
+void loadTarget(std::string filename, std::vector<ComputerGroup>* groups) {
 }
 
 /**
@@ -179,7 +198,8 @@ void display(std::vector<ComputerGroup>* groups) {
 void usage() {
   printf("%s, version %u.%u\n\n", bf::kProgramName.c_str(), bf::kMajorVersion,
          bf::kMinorVersion);
-  printf("usage: %s [-h] [-i filename]\n", bf::kProgramName.c_str());
+  printf("usage: %s [-h] -t target -c current \n", bf::kProgramName.c_str());
   printf("-h display usage\n");
-  printf("-i filename\n\n");
+  printf("-t filename of the comma-separated computer group targets\n");
+  printf("-c filename of the current computer group deployment statistics\n\n");
 }

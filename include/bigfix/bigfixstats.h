@@ -129,7 +129,14 @@ namespace bf {
 void usage();
 
 /**
- *  @brief Load current information from input file
+ *  @brief Load target information from file
+ *  @param std::string filename input file containing deployment targets
+ *  @param std::vector<ComputerGroup>* groups vector of computer groups
+ */
+void loadTarget(std::string filename, std::vector<ComputerGroup>* groups);
+
+/**
+ *  @brief Load current information from file
  *  @param std::string filename input file containing current status
  *  @param std::vector<ComputerGroup>* groups vector of computer groups
  */
