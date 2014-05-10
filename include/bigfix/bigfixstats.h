@@ -30,8 +30,8 @@
 #ifndef BIGFIX_BIGFIXSTATS_H_
 #define BIGFIX_BIGFIXSTATS_H_
 
+#include <set>
 #include <string>
-#include <vector>
 
 /**
  *  @brief Model class for BigFix deployment information for a single computer
@@ -57,6 +57,17 @@ class ComputerGroup {
   uint16_t target_ {0};
 
  public:
+  /**
+   *  @brief Construct an empty computer group
+   */
+  ComputerGroup();
+
+  /**
+   *  @brief Construct a new computer group with the supplied name
+   *  @param name name of the computer group
+   */
+  explicit ComputerGroup(const std::string name);
+
   /**
    *  @brief Accessor method for the name_ property
    *  @retval std::string Name of this computer group
@@ -101,6 +112,11 @@ class ComputerGroup {
 };
 
 /**
+ *  @brief Overload the < binary infix comparison operator for ComputerGroup
+ */
+bool operator<(const ComputerGroup& lhs, const ComputerGroup& rhs);
+
+/**
  *  @brief BigFix Statistics namespace for library-wide constants
  */
 namespace bf {
@@ -121,6 +137,9 @@ namespace bf {
 
   /** text that indicates the end of a record */
   const std::string kEnd {"</td>"};
+
+  /** delimiter for deployment targets file */
+  const std::string kDelim {","};
 }  // namespace bf
 
 /**
@@ -131,20 +150,20 @@ void usage();
 /**
  *  @brief Load target information from file
  *  @param std::string filename input file containing deployment targets
- *  @param std::vector<ComputerGroup>* groups vector of computer groups
+ *  @param std::set<ComputerGroup>& groups vector of computer groups
  */
-void loadTarget(std::string filename, std::vector<ComputerGroup>* groups);
+void loadTarget(std::string filename, std::set<ComputerGroup>* groups);
 
 /**
  *  @brief Load current information from file
  *  @param std::string filename input file containing current status
- *  @param std::vector<ComputerGroup>* groups vector of computer groups
+ *  @param std::set<ComputerGroup> groups vector of computer groups
  */
-void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups);
+void loadCurrent(std::string filename, std::set<ComputerGroup>* groups);
 
 /**
  *  @brief Display output for pasting into Confluence
  */
-void display(std::vector<ComputerGroup>* groups);
+void display(std::set<ComputerGroup> groups);
 
 #endif  // BIGFIX_BIGFIXSTATS_H_

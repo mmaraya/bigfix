@@ -30,8 +30,16 @@
 #include <algorithm>
 #include <fstream>  // NOLINT
 #include <string>
+#include <set>
 #include <vector>
 #include "bigfix/bigfixstats.h"
+
+ComputerGroup::ComputerGroup() {
+}
+
+ComputerGroup::ComputerGroup(const std::string name) {
+  name_ = name;
+}
 
 std::string ComputerGroup::name() const {
   return name_;
@@ -47,7 +55,7 @@ uint16_t ComputerGroup::target() const {
 
 uint8_t ComputerGroup::percent() const {
   if (target_ != 0) {
-    return current_ / target_ * 100;
+    return static_cast<double>(current_) / target_ * 100;
   } else {
     return 0;
   }
@@ -63,6 +71,10 @@ void ComputerGroup::set_current(uint16_t current) {
 
 void ComputerGroup::set_target(uint16_t target) {
   target_ = target;
+}
+
+bool operator<(const ComputerGroup& lhs, const ComputerGroup& rhs) {
+  return (rhs.name().compare(lhs.name()) > 0);
 }
 
 /**
@@ -109,22 +121,41 @@ int main(int argc, const char * argv[]) {
       return 1;
     }
   }
-  std::vector<ComputerGroup> groups;
+  std::set<ComputerGroup> groups;
   loadTarget(target_file, &groups);
   loadCurrent(current_file, &groups);
-  display(&groups);
+  display(groups);
 }
 
 /**
  *  @details Load computer groups and target deployment counts
  */
-void loadTarget(std::string filename, std::vector<ComputerGroup>* groups) {
+void loadTarget(std::string filename, std::set<ComputerGroup>* groups) {
+  std::ifstream fs(filename);
+  if (fs.is_open()) {
+    std::string line {};
+    while (std::getline(fs, line)) {
+      std::string group {};
+      uint16_t target {0};
+      std::size_t delim = line.find(bf::kDelim, 0);
+      // read computer group and target
+      group = line.substr(0, delim);
+      target = std::stoi(line.substr(delim + 1, line.length()));
+      // create new computer group
+      ComputerGroup cg = ComputerGroup(group);
+      cg.set_target(target);
+      groups->insert(cg);
+    }
+    fs.close();
+  } else {
+    printf("Error: Could not open file %s", filename.c_str());
+  }
 }
 
 /**
  *  @details Load computer groups and current deployment counts
  */
-void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups) {
+void loadCurrent(std::string filename, std::set<ComputerGroup>* groups) {
   std::ifstream fs(filename);
   if (fs.is_open()) {
     std::string line {};
@@ -149,11 +180,28 @@ void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups) {
             current = line.substr(start, end - start);
             count = std::stoi(current);
           }
-          // create new computer group
-          ComputerGroup cg = ComputerGroup();
-          cg.set_name(group);
+          // update computer group
+          ComputerGroup cg = ComputerGroup(group);
           cg.set_current(count);
-          groups->push_back(cg);
+          std::set<ComputerGroup>::iterator it = groups->find(cg);
+          if (it != groups->end()) {
+            ComputerGroup found = *it;
+            cg.set_target(found.target());
+            if (cg.name() == "OS") {
+              cg.set_current(count + found.current());
+            }
+            groups->erase(found);
+            groups->insert(cg);
+          } else {
+            if (cg.name() == "MBDA") {
+              it = groups->find(ComputerGroup("OS"));
+              ComputerGroup found = *it;
+              cg.set_name(found.name());
+              cg.set_target(found.target());
+              groups->erase(found);
+              groups->insert(cg);
+            }
+          }
           // read next computer group
           start = line.find(bf::kStart, start + bf::kStart.length());
         }
@@ -168,10 +216,10 @@ void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups) {
 /**
  *  @details Display computer group, current, target and percentage
  */
-void display(std::vector<ComputerGroup>* groups) {
-  uint16_t currentTotal {0}, targetTotal {0}, percentTotal {0};
+void display(std::set<ComputerGroup> groups) {
+  uint32_t currentTotal {0}, targetTotal {0}, percentTotal {0};
   std::string header = "| ", current = "| ", target = "| ", percent = "| ";
-  for (auto cg : *groups) {
+  for (auto cg : groups) {
     header += cg.name() + " | ";
     current += std::to_string(cg.current()) + " | ";
     target += std::to_string(cg.target()) + " | ";
@@ -179,11 +227,11 @@ void display(std::vector<ComputerGroup>* groups) {
     currentTotal += cg.current();
     targetTotal += cg.target();
   }
-  header += " TOTAL |";
+  header += "TOTAL |";
   current += std::to_string(currentTotal) + " |";
   target += std::to_string(targetTotal) + " |";
   if (targetTotal != 0) {
-    percentTotal = static_cast<uint16_t>(currentTotal / targetTotal * 100);
+    percentTotal = static_cast<uint16_t>(static_cast<float>(currentTotal) / targetTotal * 100);
   } else {
     percentTotal = 0;
   }
