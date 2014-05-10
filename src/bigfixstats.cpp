@@ -189,6 +189,7 @@ void loadCurrent(std::string filename, std::set<ComputerGroup>* groups) {
             ComputerGroup found = *it;
             cg.set_target(found.target());
             if (cg.name() == "OS") {
+              cg.set_name("OS*");
               cg.set_current(count + found.current());
             }
             groups->erase(found);
@@ -219,10 +220,10 @@ void loadCurrent(std::string filename, std::set<ComputerGroup>* groups) {
  */
 void display(std::set<ComputerGroup> groups) {
   uint32_t currentTotal {0}, targetTotal {0}, percentTotal {0};
-  std::string header = "|| Nodes   || ";
-  std::string current = "| *Current* | ";
-  std::string target = "| *Target*  | ";
-  std::string percent = "| *% Comp*  | ";
+  std::string header = "|| Nodes       || ";
+  std::string current = "| *Current*    | ";
+  std::string target = "| *Target*     | ";
+  std::string percent = "| *% Comp*     | ";
   for (auto cg : groups) {
     header += cg.name() + " || ";
     current += format(cg.current()) + " | ";
