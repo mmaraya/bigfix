@@ -231,7 +231,7 @@ void display(std::set<ComputerGroup> groups) {
   current += std::to_string(currentTotal) + " |";
   target += std::to_string(targetTotal) + " |";
   if (targetTotal != 0) {
-    percentTotal = static_cast<uint16_t>(static_cast<float>(currentTotal) / targetTotal * 100);
+    percentTotal = static_cast<float>(currentTotal) / targetTotal * 100;
   } else {
     percentTotal = 0;
   }
