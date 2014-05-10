@@ -28,6 +28,7 @@
  */
 
 #include <algorithm>
+#include <cmath>
 #include <fstream>  // NOLINT
 #include <string>
 #include <set>
@@ -55,7 +56,7 @@ uint16_t ComputerGroup::target() const {
 
 uint8_t ComputerGroup::percent() const {
   if (target_ != 0) {
-    return static_cast<double>(current_) / target_ * 100;
+    return round(static_cast<double>(current_) / target_ * 100);
   } else {
     return 0;
   }
@@ -218,24 +219,27 @@ void loadCurrent(std::string filename, std::set<ComputerGroup>* groups) {
  */
 void display(std::set<ComputerGroup> groups) {
   uint32_t currentTotal {0}, targetTotal {0}, percentTotal {0};
-  std::string header = "| ", current = "| ", target = "| ", percent = "| ";
+  std::string header = "|| Nodes   || ";
+  std::string current = "| *Current* | ";
+  std::string target = "| *Target*  | ";
+  std::string percent = "| *% Comp*  | ";
   for (auto cg : groups) {
-    header += cg.name() + " | ";
-    current += std::to_string(cg.current()) + " | ";
-    target += std::to_string(cg.target()) + " | ";
-    percent += std::to_string(cg.percent()) + " | ";
+    header += cg.name() + " || ";
+    current += format(cg.current()) + " | ";
+    target += format(cg.target()) + " | ";
+    percent += "*" + std::to_string(cg.percent()) + "* | ";
     currentTotal += cg.current();
     targetTotal += cg.target();
   }
-  header += "TOTAL |";
-  current += std::to_string(currentTotal) + " |";
-  target += std::to_string(targetTotal) + " |";
+  header += "TOTAL ||";
+  current += format(currentTotal) + " |";
+  target += format(targetTotal) + " |";
   if (targetTotal != 0) {
-    percentTotal = static_cast<float>(currentTotal) / targetTotal * 100;
+    percentTotal = round(static_cast<float>(currentTotal) / targetTotal * 100);
   } else {
     percentTotal = 0;
   }
-  percent += std::to_string(percentTotal) + " |";
+  percent += "*" + std::to_string(percentTotal) + "* |";
   printf("%s\n%s\n%s\n%s\n", header.c_str(), current.c_str(), target.c_str(),
          percent.c_str());
 }
@@ -251,3 +255,18 @@ void usage() {
   printf("-t filename of the comma-separated computer group targets\n");
   printf("-c filename of the current computer group deployment statistics\n\n");
 }
+
+/**
+ *  @details format the supplied number into comma-separated groupings since
+ *           there apparently is no portable way of doing this
+ */
+std::string format(uint32_t number) {
+  std::string output = std::to_string(number);
+  if (output.length() > 3) {
+    for (int i = static_cast<int>(output.length() - 3); i > 0; i -= 3) {
+      output.insert(i, ",");
+    }
+  }
+  return output;
+}
+

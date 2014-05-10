@@ -162,6 +162,11 @@ void loadTarget(std::string filename, std::set<ComputerGroup>* groups);
 void loadCurrent(std::string filename, std::set<ComputerGroup>* groups);
 
 /**
+ *  @brief Format number into comma-separated groupings
+ */
+std::string format(uint32_t number);
+
+/**
  *  @brief Display output for pasting into Confluence
  */
 void display(std::set<ComputerGroup> groups);
