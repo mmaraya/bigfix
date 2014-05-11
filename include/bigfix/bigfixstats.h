@@ -30,7 +30,6 @@
 #ifndef BIGFIX_BIGFIXSTATS_H_
 #define BIGFIX_BIGFIXSTATS_H_
 
-#include <set>
 #include <string>
 
 /**
@@ -61,13 +60,13 @@ class ComputerGroup {
    *  @param number 32-bit unsigned integer to format
    *  @retval std::string comma-separated thousands
    */
-  std::string format(uint32_t number);
+  std::string format(uint32_t number) const;
 
   /**
    *  @brief Return the length of widest display element for this record
    *  @retval uint8_t widest display element for this record
    */
-  uint8_t widest();
+  uint8_t widest() const;
   
  public:
   /**
@@ -153,11 +152,6 @@ class ComputerGroup {
 };
 
 /**
- *  @brief Overload the < binary infix comparison operator for ComputerGroup
- */
-bool operator<(const ComputerGroup& lhs, const ComputerGroup& rhs);
-
-/**
  *  @brief BigFix Statistics namespace for library-wide constants
  */
 namespace bf {
@@ -193,14 +187,14 @@ void usage();
  *  @param std::string filename input file containing deployment targets
  *  @param std::set<ComputerGroup>& groups vector of computer groups
  */
-void loadTarget(std::string filename, std::set<ComputerGroup>* groups);
+void loadTarget(std::string filename, std::vector<ComputerGroup>* groups);
 
 /**
  *  @brief Load current information from file
  *  @param std::string filename input file containing current status
  *  @param std::set<ComputerGroup> groups vector of computer groups
  */
-void loadCurrent(std::string filename, std::set<ComputerGroup>* groups);
+void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups);
 
 /**
  *  @brief Format number into comma-separated groupings
@@ -210,6 +204,6 @@ std::string format(uint32_t number);
 /**
  *  @brief Display output for pasting into Confluence
  */
-void display(std::set<ComputerGroup> groups);
+void display(std::vector<ComputerGroup>* groups);
 
 #endif  // BIGFIX_BIGFIXSTATS_H_
