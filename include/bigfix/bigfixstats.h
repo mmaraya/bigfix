@@ -56,6 +56,19 @@ class ComputerGroup {
    */
   uint16_t target_ {0};
 
+  /**
+   *  @brief Format a number into comma-separated groupings
+   *  @param number 32-bit unsigned integer to format
+   *  @retval std::string comma-separated thousands
+   */
+  std::string format(uint32_t number);
+
+  /**
+   *  @brief Return the length of widest display element for this record
+   *  @retval uint8_t widest display element for this record
+   */
+  uint8_t widest();
+  
  public:
   /**
    *  @brief Construct an empty computer group
@@ -75,10 +88,23 @@ class ComputerGroup {
   std::string name() const;
 
   /**
+   *  @brief Return formatted version of the computer group name
+   *  @retval output display formatted version of the computer group name
+   */
+  std::string formatted_name() const;
+
+  /**
    *  @brief Accessor method for the current_ property
    *  @retval uint16_t Number of computers currently in this computer group
    */
   uint16_t current() const;
+
+  /**
+   *  @brief Return formatted version of the current_ property
+   *  @retval output display formatted version of the number of computers 
+   *          currently in this computer group
+   */
+  std::string formatted_current() const;
 
   /**
    *  @brief Accessor method for the target_ property
@@ -87,11 +113,26 @@ class ComputerGroup {
   uint16_t target() const;
 
   /**
+   *  @brief Return formatted version of the target_ property
+   *  @retval output display formatted version of the number of computers
+   *          expected to be in this computer group
+   */
+  std::string formatted_target() const;
+  
+  /**
    *  @brief Accessor method for the deployment percentage computed value
    *  @retval uint8_t Percentage of computers deployed in this computer group
    */
   uint8_t percent() const;
 
+  /**
+   *  @brief Return formatted version of the deployment percentage computed
+   *         value
+   *  @retval output display formatted version of the Percentage of computers 
+   *          deployed in this computer group
+   */
+  std::string formatted_percent() const;
+  
   /**
    *  @brief Mutator method for the name_ property
    *  @param name Name of this computer group

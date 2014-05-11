@@ -42,16 +42,43 @@ ComputerGroup::ComputerGroup(const std::string name) {
   name_ = name;
 }
 
+uint8_t ComputerGroup::widest() {
+  uint8_t top {0};
+  uint8_t name = name_.length();
+  uint8_t current = format(current_).length();
+  uint8_t target = format(target_).length();
+  uint8_t percent = format(this->percent()).length() + 2;
+  std::vector<uint8_t> vector = {name, current, target, percent};
+  for (auto it : vector) {
+    if (it > top) {
+      top = it;
+    }
+  }
+  return top;
+}
+
 std::string ComputerGroup::name() const {
   return name_;
+}
+
+std::string ComputerGroup::formatted_name() const {
+  return "";
 }
 
 uint16_t ComputerGroup::current() const {
   return current_;
 }
 
+std::string ComputerGroup::formatted_current() const {
+  return "";
+}
+
 uint16_t ComputerGroup::target() const {
   return target_;
+}
+
+std::string ComputerGroup::formatted_target() const {
+  return "";
 }
 
 uint8_t ComputerGroup::percent() const {
@@ -60,6 +87,10 @@ uint8_t ComputerGroup::percent() const {
   } else {
     return 0;
   }
+}
+
+std::string ComputerGroup::formatted_percent() const {
+  return "";
 }
 
 void ComputerGroup::set_name(std::string name) {
@@ -76,6 +107,20 @@ void ComputerGroup::set_target(uint16_t target) {
 
 bool operator<(const ComputerGroup& lhs, const ComputerGroup& rhs) {
   return (rhs.name().compare(lhs.name()) > 0);
+}
+
+/**
+ *  @details format the supplied number into comma-separated groupings since
+ *           there apparently is no portable way of doing this
+ */
+std::string ComputerGroup::format(uint32_t number) {
+  std::string output = std::to_string(number);
+  if (output.length() > 3) {
+    for (int i = static_cast<int>(output.length() - 3); i > 0; i -= 3) {
+      output.insert(i, ",");
+    }
+  }
+  return output;
 }
 
 /**
@@ -219,28 +264,27 @@ void loadCurrent(std::string filename, std::set<ComputerGroup>* groups) {
  *  @details Display computer group, current, target and percentage
  */
 void display(std::set<ComputerGroup> groups) {
-  uint32_t currentTotal {0}, targetTotal {0}, percentTotal {0};
+  uint32_t currentTotal {0}, targetTotal {0};
   std::string header = "|| Nodes       || ";
   std::string current = "| *Current*    | ";
   std::string target = "| *Target*     | ";
   std::string percent = "| *% Comp*     | ";
+  // compute totals
   for (auto cg : groups) {
-    header += cg.name() + " || ";
-    current += format(cg.current()) + " | ";
-    target += format(cg.target()) + " | ";
-    percent += "*" + std::to_string(cg.percent()) + "* | ";
     currentTotal += cg.current();
     targetTotal += cg.target();
   }
-  header += "TOTAL ||";
-  current += format(currentTotal) + " |";
-  target += format(targetTotal) + " |";
-  if (targetTotal != 0) {
-    percentTotal = round(static_cast<float>(currentTotal) / targetTotal * 100);
-  } else {
-    percentTotal = 0;
+  ComputerGroup total = ComputerGroup("TOTAL");
+  total.set_current(currentTotal);
+  total.set_target(targetTotal);
+  groups.insert(total);
+  // display results
+  for (auto cg : groups) {
+    header += cg.formatted_name() + " || ";
+    current += cg.formatted_current() + " | ";
+    target += cg.formatted_target() + " | ";
+    percent += cg.formatted_percent() + " | ";
   }
-  percent += "*" + std::to_string(percentTotal) + "* |";
   printf("%s\n%s\n%s\n%s\n", header.c_str(), current.c_str(), target.c_str(),
          percent.c_str());
 }
@@ -255,19 +299,5 @@ void usage() {
   printf("-h display usage\n");
   printf("-t filename of the comma-separated computer group targets\n");
   printf("-c filename of the current computer group deployment statistics\n\n");
-}
-
-/**
- *  @details format the supplied number into comma-separated groupings since
- *           there apparently is no portable way of doing this
- */
-std::string format(uint32_t number) {
-  std::string output = std::to_string(number);
-  if (output.length() > 3) {
-    for (int i = static_cast<int>(output.length() - 3); i > 0; i -= 3) {
-      output.insert(i, ",");
-    }
-  }
-  return output;
 }
 
