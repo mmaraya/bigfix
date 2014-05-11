@@ -48,12 +48,12 @@ class ComputerGroup {
   /**
    *  @brief Number of computers currently in this computer group
    */
-  uint16_t current_ {0};
+  uint32_t current_ {0};
 
   /**
    *  @brief Number of computers expected to be in this computer group
    */
-  uint16_t target_ {0};
+  uint32_t target_ {0};
 
   /**
    *  @brief Format a number into comma-separated groupings
@@ -94,9 +94,9 @@ class ComputerGroup {
 
   /**
    *  @brief Accessor method for the current_ property
-   *  @retval uint16_t Number of computers currently in this computer group
+   *  @retval Number of computers currently in this computer group
    */
-  uint16_t current() const;
+  uint32_t current() const;
 
   /**
    *  @brief Return formatted version of the current_ property
@@ -107,9 +107,9 @@ class ComputerGroup {
 
   /**
    *  @brief Accessor method for the target_ property
-   *  @retval uint16_t Number of computers expected to be in this computer group
+   *  @retval Number of computers expected to be in this computer group
    */
-  uint16_t target() const;
+  uint32_t target() const;
 
   /**
    *  @brief Return formatted version of the target_ property
@@ -140,15 +140,15 @@ class ComputerGroup {
 
   /**
    *  @brief Mutator method for the current_ property
-   *  @param uint16_t Number of computers currently in this computer group
+   *  @param current Number of computers currently in this computer group
    */
-  void set_current(uint16_t current);
+  void set_current(uint32_t current);
 
   /**
    *  @brief Mutator method for the target_ property
-   *  @param uint16_t Number of computers expected to be in this computer group
+   *  @param target Number of computers expected to be in this computer group
    */
-  void set_target(uint16_t target);
+  void set_target(uint32_t target);
 };
 
 /**
@@ -187,14 +187,14 @@ void usage();
  *  @param std::string filename input file containing deployment targets
  *  @param std::set<ComputerGroup>& groups vector of computer groups
  */
-void loadTarget(std::string filename, std::vector<ComputerGroup>* groups);
+void loadTarget(std::string filename, std::vector<ComputerGroup>& groups);
 
 /**
  *  @brief Load current information from file
  *  @param std::string filename input file containing current status
  *  @param std::set<ComputerGroup> groups vector of computer groups
  */
-void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups);
+void loadCurrent(std::string filename, std::vector<ComputerGroup>& groups);
 
 /**
  *  @brief Format number into comma-separated groupings
@@ -204,6 +204,6 @@ std::string format(uint32_t number);
 /**
  *  @brief Display output for pasting into Confluence
  */
-void display(std::vector<ComputerGroup>* groups);
+void display(std::vector<ComputerGroup>& groups);
 
 #endif  // BIGFIX_BIGFIXSTATS_H_

@@ -30,6 +30,7 @@
 #include <algorithm>
 #include <cmath>
 #include <fstream>  // NOLINT
+#include <map>
 #include <string>
 #include <vector>
 #include "bigfix/bigfixstats.h"
@@ -64,20 +65,22 @@ std::string ComputerGroup::formatted_name() const {
   return name_ + std::string(this->widest() - name_.length(), ' ');
 }
 
-uint16_t ComputerGroup::current() const {
+uint32_t ComputerGroup::current() const {
   return current_;
 }
 
 std::string ComputerGroup::formatted_current() const {
-  return "";
+  std::string output = format(current_);
+  return output + std::string(this->widest() - output.length() + 1, ' ');
 }
 
-uint16_t ComputerGroup::target() const {
+uint32_t ComputerGroup::target() const {
   return target_;
 }
 
 std::string ComputerGroup::formatted_target() const {
-  return "";
+  std::string output = format(target_);
+  return output + std::string(this->widest() - output.length() + 1, ' ');
 }
 
 uint8_t ComputerGroup::percent() const {
@@ -89,18 +92,19 @@ uint8_t ComputerGroup::percent() const {
 }
 
 std::string ComputerGroup::formatted_percent() const {
-  return "";
+  std::string output = "*" + std::to_string(this->percent()) + "*";
+  return output + std::string(this->widest() - output.length() + 1, ' ');
 }
 
 void ComputerGroup::set_name(std::string name) {
   name_ = name;
 }
 
-void ComputerGroup::set_current(uint16_t current) {
+void ComputerGroup::set_current(uint32_t current) {
   current_ = current;
 }
 
-void ComputerGroup::set_target(uint16_t target) {
+void ComputerGroup::set_target(uint32_t target) {
   target_ = target;
 }
 
@@ -163,15 +167,15 @@ int main(int argc, const char * argv[]) {
     }
   }
   std::vector<ComputerGroup> groups;
-  loadTarget(target_file, &groups);
-  loadCurrent(current_file, &groups);
-  display(&groups);
+  loadTarget(target_file, groups);
+  loadCurrent(current_file, groups);
+  display(groups);
 }
 
 /**
  *  @details Load computer groups and target deployment counts
  */
-void loadTarget(std::string filename, std::vector<ComputerGroup>* groups) {
+void loadTarget(std::string filename, std::vector<ComputerGroup>& groups) {
   std::ifstream fs(filename);
   if (fs.is_open()) {
     std::string line {};
@@ -185,7 +189,7 @@ void loadTarget(std::string filename, std::vector<ComputerGroup>* groups) {
       // create new computer group
       ComputerGroup cg = ComputerGroup(group);
       cg.set_target(target);
-      groups->push_back(cg);
+      groups.push_back(cg);
     }
     fs.close();
   } else {
@@ -194,9 +198,10 @@ void loadTarget(std::string filename, std::vector<ComputerGroup>* groups) {
 }
 
 /**
- *  @details Load computer groups and current deployment counts
+ *  @details Load current deployment counts
  */
-void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups) {
+void loadCurrent(std::string filename, std::vector<ComputerGroup>& groups) {
+  std::map<std::string, uint32_t> current;
   std::ifstream fs(filename);
   if (fs.is_open()) {
     std::string line {};
@@ -205,8 +210,8 @@ void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups) {
         // read records
         std::size_t start = line.find(bf::kStart, 0), end {0};
         while (start != std::string::npos) {
-          uint16_t count {0};
-          std::string group {}, current {};
+          std::string group {};
+          uint32_t count {0};
           // read computer group
           end = line.find(bf::kEnd, start);
           if (end != std::string::npos) {
@@ -218,28 +223,31 @@ void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups) {
           end = line.find(bf::kEnd, start);
           if (end != std::string::npos) {
             start += bf::kStart.length();
-            current = line.substr(start, end - start);
-            count = std::stoi(current);
+            count = std::stoi(line.substr(start, end - start));
           }
-          // update computer group
-          ComputerGroup cg = ComputerGroup(group);
-          cg.set_current(count);
-          // do replacements for MBDA and OS
-          for (auto element : *groups) {
-            if (element.name() == "OS") {
-              element.set_name("OS*");
-              element.set_current(count + element.current());
-            }
-            if (element.name() == "MBDA") {
-              element.set_target(cg.target());
-            }
-          }
+          // populate collection
+          current[group] = count;
           // read next computer group
           start = line.find(bf::kStart, start + bf::kStart.length());
         }
       }
     }
     fs.close();
+    // update computer group collection
+    std::map<std::string, uint32_t>::iterator it;
+    for (auto cg : groups) {
+      it = current.find(cg.name());
+      uint32_t count = current.find(cg.name())->second;
+      cg.set_current(count);
+      // do replacements for MBDA and OS
+      if (cg.name() == "OS") {
+        cg.set_name("OS*");
+        cg.set_current(count + cg.current());
+      }
+      if (cg.name() == "MBDA") {
+        cg.set_target(count);
+      }
+    }
   } else {
     printf("Error: Could not open file %s", filename.c_str());
   }
@@ -248,24 +256,24 @@ void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups) {
 /**
  *  @details Display computer group, current, target and percentage
  */
-void display(std::vector<ComputerGroup>* groups) {
+void display(std::vector<ComputerGroup>& groups) {
   uint32_t currentTotal {0}, targetTotal {0};
   // compute totals
-  for (auto cg : *groups) {
+  for (auto cg : groups) {
     currentTotal += cg.current();
     targetTotal += cg.target();
   }
   ComputerGroup total = ComputerGroup("TOTAL");
   total.set_current(currentTotal);
   total.set_target(targetTotal);
-  groups->push_back(total);
+  groups.push_back(total);
   // populate rows
   std::string header = "|| Nodes       || ";
   std::string current = "| *Current*    | ";
   std::string target = "| *Target*     | ";
   std::string percent = "| *% Comp*     | ";
   // display results
-  for (auto cg : *groups) {
+  for (auto cg : groups) {
     header += cg.formatted_name() + " || ";
     current += cg.formatted_current() + " | ";
     target += cg.formatted_target() + " | ";
