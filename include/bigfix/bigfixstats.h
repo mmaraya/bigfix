@@ -198,12 +198,6 @@ void loadTarget(std::string filename, std::vector<ComputerGroup>* groups);
 void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups);
 
 /**
- *  @brief Format number into comma-separated groupings
- *  @param number unsigned integer to format into comma-separated thousands
- */
-std::string format(uint32_t number);
-
-/**
  *  @brief Display output for pasting into Confluence
  *  @param groups collection of computer groups
  */
