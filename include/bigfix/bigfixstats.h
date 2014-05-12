@@ -198,6 +198,13 @@ void loadTarget(std::string filename, std::vector<ComputerGroup>* groups);
 void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups);
 
 /**
+ *  @brief Display output for deployment history
+ *  @param date date of this snapshot
+ *  @param groups collection of computer groups
+ */
+void history(std::string date, std::vector<ComputerGroup>* groups);
+
+/**
  *  @brief Display output for pasting into Confluence
  *  @param groups collection of computer groups
  */
