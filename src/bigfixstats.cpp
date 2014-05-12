@@ -167,15 +167,15 @@ int main(int argc, const char * argv[]) {
     }
   }
   std::vector<ComputerGroup> groups;
-  loadTarget(target_file, groups);
-  loadCurrent(current_file, groups);
-  display(groups);
+  loadTarget(target_file, &groups);
+  loadCurrent(current_file, &groups);
+  display(&groups);
 }
 
 /**
  *  @details Load computer groups and target deployment counts
  */
-void loadTarget(std::string filename, std::vector<ComputerGroup>& groups) {
+void loadTarget(std::string filename, std::vector<ComputerGroup>* groups) {
   std::ifstream fs(filename);
   if (fs.is_open()) {
     std::string line {};
@@ -189,7 +189,7 @@ void loadTarget(std::string filename, std::vector<ComputerGroup>& groups) {
       // create new computer group
       ComputerGroup cg = ComputerGroup(group);
       cg.set_target(target);
-      groups.push_back(cg);
+      groups->push_back(cg);
     }
     fs.close();
   } else {
@@ -200,7 +200,7 @@ void loadTarget(std::string filename, std::vector<ComputerGroup>& groups) {
 /**
  *  @details Load current deployment counts
  */
-void loadCurrent(std::string filename, std::vector<ComputerGroup>& groups) {
+void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups) {
   std::map<std::string, uint32_t> current;
   std::ifstream fs(filename);
   if (fs.is_open()) {
@@ -235,7 +235,7 @@ void loadCurrent(std::string filename, std::vector<ComputerGroup>& groups) {
     fs.close();
     // update computer group collection
     std::map<std::string, uint32_t>::iterator it;
-    for (auto &cg : groups) {
+    for (auto &cg : *groups) {
       it = current.find(cg.name());
       uint32_t count = current.find(cg.name())->second;
       cg.set_current(count);
@@ -256,24 +256,24 @@ void loadCurrent(std::string filename, std::vector<ComputerGroup>& groups) {
 /**
  *  @details Display computer group, current, target and percentage
  */
-void display(std::vector<ComputerGroup>& groups) {
+void display(std::vector<ComputerGroup>* groups) {
   uint32_t currentTotal {0}, targetTotal {0};
   // compute totals
-  for (auto cg : groups) {
+  for (auto cg : *groups) {
     currentTotal += cg.current();
     targetTotal += cg.target();
   }
   ComputerGroup total = ComputerGroup("TOTAL");
   total.set_current(currentTotal);
   total.set_target(targetTotal);
-  groups.push_back(total);
+  groups->push_back(total);
   // populate rows
   std::string header = "|| Nodes       || ";
   std::string current = "| *Current*    | ";
   std::string target = "| *Target*     | ";
   std::string percent = "| *% Comp*     | ";
   // display results
-  for (auto cg : groups) {
+  for (auto cg : *groups) {
     header += cg.formatted_name() + " || ";
     current += cg.formatted_current() + " | ";
     target += cg.formatted_target() + " | ";

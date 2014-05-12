@@ -184,26 +184,28 @@ void usage();
 
 /**
  *  @brief Load target information from file
- *  @param std::string filename input file containing deployment targets
- *  @param std::set<ComputerGroup>& groups vector of computer groups
+ *  @param filename input file containing deployment targets
+ *  @param groups collection of computer groups
  */
-void loadTarget(std::string filename, std::vector<ComputerGroup>& groups);
+void loadTarget(std::string filename, std::vector<ComputerGroup>* groups);
 
 /**
  *  @brief Load current information from file
- *  @param std::string filename input file containing current status
- *  @param std::set<ComputerGroup> groups vector of computer groups
+ *  @param filename input file containing current status
+ *  @param groups collection of computer groups
  */
-void loadCurrent(std::string filename, std::vector<ComputerGroup>& groups);
+void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups);
 
 /**
  *  @brief Format number into comma-separated groupings
+ *  @param number unsigned integer to format into comma-separated thousands
  */
 std::string format(uint32_t number);
 
 /**
  *  @brief Display output for pasting into Confluence
+ *  @param groups collection of computer groups
  */
-void display(std::vector<ComputerGroup>& groups);
+void display(std::vector<ComputerGroup>* groups);
 
 #endif  // BIGFIX_BIGFIXSTATS_H_
