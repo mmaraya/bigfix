@@ -243,8 +243,14 @@ void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups) {
     std::map<std::string, uint32_t>::iterator it;
     for (auto &cg : *groups) {
       it = current.find(cg.name());
-      uint32_t count = current.find(cg.name())->second;
-      cg.set_current(cg.current() + count);
+      if (it != current.end()) {
+        cg.set_current(it->second);
+        // add MBDA current deployment stats to OS
+        if (cg.name() == "OS") {
+          it = current.find("MBDA");
+          cg.set_current(cg.current() + it->second);
+        }
+      }
     }
   } else {
     printf("Error: Could not open file %s", filename.c_str());
