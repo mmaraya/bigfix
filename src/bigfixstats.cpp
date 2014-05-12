@@ -62,7 +62,13 @@ std::string ComputerGroup::name() const {
 }
 
 std::string ComputerGroup::formatted_name() const {
-  return name_ + std::string(this->widest() - name_.length(), ' ');
+  std::string ret;
+  if (name_ == "OS") {
+    ret = name_ + "*" + std::string(this->widest() - name_.length() - 1, ' ');
+  } else {
+    ret = name_ + std::string(this->widest() - name_.length(), ' ');
+  }
+  return ret;
 }
 
 uint32_t ComputerGroup::current() const {
@@ -238,15 +244,7 @@ void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups) {
     for (auto &cg : *groups) {
       it = current.find(cg.name());
       uint32_t count = current.find(cg.name())->second;
-      cg.set_current(count);
-      // do replacements for MBDA and OS
-      if (cg.name() == "OS") {
-        cg.set_name("OS*");
-        cg.set_current(count + cg.current());
-      }
-      if (cg.name() == "MBDA") {
-        cg.set_target(count);
-      }
+      cg.set_current(cg.current() + count);
     }
   } else {
     printf("Error: Could not open file %s", filename.c_str());
