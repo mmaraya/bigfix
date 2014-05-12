@@ -235,7 +235,7 @@ void loadCurrent(std::string filename, std::vector<ComputerGroup>& groups) {
     fs.close();
     // update computer group collection
     std::map<std::string, uint32_t>::iterator it;
-    for (auto cg : groups) {
+    for (auto &cg : groups) {
       it = current.find(cg.name());
       uint32_t count = current.find(cg.name())->second;
       cg.set_current(count);
