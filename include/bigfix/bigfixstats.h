@@ -31,6 +31,7 @@
 #define BIGFIX_BIGFIXSTATS_H_
 
 #include <string>
+#include <vector>
 
 /**
  *  @brief Model class for BigFix deployment information for a single computer
@@ -67,7 +68,7 @@ class ComputerGroup {
    *  @retval uint8_t widest display element for this record
    */
   uint8_t widest() const;
-  
+
  public:
   /**
    *  @brief Construct an empty computer group
@@ -117,7 +118,7 @@ class ComputerGroup {
    *          expected to be in this computer group
    */
   std::string formatted_target() const;
-  
+
   /**
    *  @brief Accessor method for the deployment percentage computed value
    *  @retval uint8_t Percentage of computers deployed in this computer group
@@ -131,7 +132,7 @@ class ComputerGroup {
    *          deployed in this computer group
    */
   std::string formatted_percent() const;
-  
+
   /**
    *  @brief Mutator method for the name_ property
    *  @param name Name of this computer group
