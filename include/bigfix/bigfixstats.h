@@ -193,9 +193,11 @@ void loadTarget(std::string filename, std::vector<ComputerGroup>* groups);
 /**
  *  @brief Load current information from file
  *  @param filename input file containing current status
- *  @param groups collection of computer groups
+ *  @param raw collection of computer groups with raw deployment counts
+ *  @param final collection of computer groups with finalized counts
  */
-void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups);
+void loadCurrent(std::string filename, std::map<std::string, uint32_t>* raw,
+                 std::vector<ComputerGroup>* final);
 
 /**
  *  @brief Display output for deployment history
@@ -206,8 +208,10 @@ void history(std::string date, std::vector<ComputerGroup>* groups);
 
 /**
  *  @brief Display output for pasting into Confluence
- *  @param groups collection of computer groups
+ *  @param raw collection of raw computer group deployment counts
+ *  @param final collection of computer groups with finalized counts
  */
-void display(std::vector<ComputerGroup>* groups);
+void display(std::map<std::string, uint32_t>* raw,
+             std::vector<ComputerGroup>* final);
 
 #endif  // BIGFIX_BIGFIXSTATS_H_

@@ -172,16 +172,17 @@ int main(int argc, const char * argv[]) {
       return 1;
     }
   }
-  std::vector<ComputerGroup> groups;
-  loadTarget(target_file, &groups);
-  loadCurrent(current_file, &groups);
-  display(&groups);
+  std::map<std::string, uint32_t> raw;
+  std::vector<ComputerGroup> final;
+  loadTarget(target_file, &final);
+  loadCurrent(current_file, &raw, &final);
+  display(&raw, &final);
 }
 
 /**
  *  @details Load computer groups and target deployment counts
  */
-void loadTarget(std::string filename, std::vector<ComputerGroup>* groups) {
+void loadTarget(std::string filename, std::vector<ComputerGroup>* final) {
   std::ifstream fs(filename);
   if (fs.is_open()) {
     std::string line {};
@@ -195,7 +196,7 @@ void loadTarget(std::string filename, std::vector<ComputerGroup>* groups) {
       // create new computer group
       ComputerGroup cg = ComputerGroup(group);
       cg.set_target(target);
-      groups->push_back(cg);
+      final->push_back(cg);
     }
     fs.close();
   } else {
@@ -206,7 +207,8 @@ void loadTarget(std::string filename, std::vector<ComputerGroup>* groups) {
 /**
  *  @details Load current deployment counts
  */
-void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups) {
+void loadCurrent(std::string filename, std::map<std::string, uint32_t>* raw,
+                 std::vector<ComputerGroup>* final) {
   std::map<std::string, uint32_t> current;
   std::ifstream fs(filename);
   if (fs.is_open()) {
@@ -241,7 +243,7 @@ void loadCurrent(std::string filename, std::vector<ComputerGroup>* groups) {
     fs.close();
     // update computer group collection
     std::map<std::string, uint32_t>::iterator it;
-    for (auto &cg : *groups) {
+    for (auto &cg : *final) {
       it = current.find(cg.name());
       if (it != current.end()) {
         cg.set_current(it->second);
@@ -266,24 +268,25 @@ void history(std::string date, std::vector<ComputerGroup>* groups) {
 /**
  *  @details Display computer group, current, target and percentage
  */
-void display(std::vector<ComputerGroup>* groups) {
+void display(std::map<std::string, uint32_t>* raw,
+             std::vector<ComputerGroup>* final) {
   uint32_t currentTotal {0}, targetTotal {0};
   // compute totals
-  for (auto cg : *groups) {
+  for (auto cg : *final) {
     currentTotal += cg.current();
     targetTotal += cg.target();
   }
   ComputerGroup total = ComputerGroup("TOTAL");
   total.set_current(currentTotal);
   total.set_target(targetTotal);
-  groups->push_back(total);
+  final->push_back(total);
   // populate rows
   std::string header = "|| Nodes       || ";
   std::string current = "| *Current*    | ";
   std::string target = "| *Target*     | ";
   std::string percent = "| *% Comp*     | ";
   // display results
-  for (auto cg : *groups) {
+  for (auto cg : *final) {
     header += cg.formatted_name() + " || ";
     current += cg.formatted_current() + " | ";
     target += cg.formatted_target() + " | ";
