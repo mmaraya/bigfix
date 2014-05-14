@@ -209,7 +209,6 @@ void loadTarget(std::string filename, std::vector<ComputerGroup>* final) {
  */
 void loadCurrent(std::string filename, std::map<std::string, uint32_t>* raw,
                  std::vector<ComputerGroup>* final) {
-  std::map<std::string, uint32_t> current;
   std::ifstream fs(filename);
   if (fs.is_open()) {
     std::string line {};
@@ -234,7 +233,7 @@ void loadCurrent(std::string filename, std::map<std::string, uint32_t>* raw,
             count = std::stoi(line.substr(start, end - start));
           }
           // populate collection
-          current[group] = count;
+          raw->emplace(group, count);
           // read next computer group
           start = line.find(bf::kStart, start + bf::kStart.length());
         }
@@ -244,12 +243,12 @@ void loadCurrent(std::string filename, std::map<std::string, uint32_t>* raw,
     // update computer group collection
     std::map<std::string, uint32_t>::iterator it;
     for (auto &cg : *final) {
-      it = current.find(cg.name());
-      if (it != current.end()) {
+      it = raw->find(cg.name());
+      if (it != raw->end()) {
         cg.set_current(it->second);
         // add MBDA current deployment stats to OS
         if (cg.name() == "OS") {
-          it = current.find("MBDA");
+          it = raw->find("MBDA");
           cg.set_current(cg.current() + it->second);
         }
       }
