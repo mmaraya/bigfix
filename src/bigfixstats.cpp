@@ -269,15 +269,16 @@ void history(std::string date, std::vector<ComputerGroup>* groups) {
  */
 void display(std::map<std::string, uint32_t>* raw,
              std::vector<ComputerGroup>* final) {
-  uint32_t currentTotal {0}, targetTotal {0};
-  // compute totals
+  // compute raw totals
+  // compute final totals
+  uint32_t current_total {0}, target_total {0};
   for (auto cg : *final) {
-    currentTotal += cg.current();
-    targetTotal += cg.target();
+    current_total += cg.current();
+    target_total += cg.target();
   }
   ComputerGroup total = ComputerGroup("TOTAL");
-  total.set_current(currentTotal);
-  total.set_target(targetTotal);
+  total.set_current(current_total);
+  total.set_target(target_total);
   final->push_back(total);
   // populate rows
   std::string header = "|| Nodes       || ";
