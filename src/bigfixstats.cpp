@@ -264,13 +264,20 @@ void loadCurrent(std::string filename, std::map<std::string, uint32_t>* raw,
 void display(std::string filename, std::map<std::string, uint32_t>* raw,
              std::vector<ComputerGroup>* final) {
   // extract date from filename
-  std::string date = filename.substr(0, 0);
+  size_t begin = filename.length() - bf::kExt.length() - bf::kDate.length();
+  std::string date = filename.substr(begin, bf::kDate.length());
+  // store raw results
+  std::string raw_display[2] {"||   Date   || ", "|  " + date + "  | "};
   // compute raw totals
   uint32_t raw_total {0};
   for (auto cg : *raw) {
     raw_total += cg.second;
+    if (cg.first != "CBS" && cg.first != "HCHB") {
+      raw_display[0] += cg.first + " || ";
+      raw_display[1] += std::to_string(cg.second) + " | ";
+    }
   }
-  // display raw results
+  printf("%s\n%s\n\n", raw_display[0].c_str(), raw_display[1].c_str());
   // compute final totals
   uint32_t current_total {0}, target_total {0};
   for (auto cg : *final) {
