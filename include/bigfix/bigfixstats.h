@@ -57,13 +57,6 @@ class ComputerGroup {
   uint32_t target_ {0};
 
   /**
-   *  @brief Format a number into comma-separated groupings
-   *  @param number 32-bit unsigned integer to format
-   *  @retval std::string comma-separated thousands
-   */
-  std::string format(uint32_t number) const;
-
-  /**
    *  @brief Return the length of widest display element for this record
    *  @retval uint8_t widest display element for this record
    */
@@ -182,6 +175,13 @@ namespace bf {
 
   /** format of the date field embedded in the deployment status file name */
   const std::string kDate {"yyyymmdd"};
+
+  /**
+   *  @brief Format a number into comma-separated groupings
+   *  @param number 32-bit unsigned integer to format
+   *  @retval std::string comma-separated thousands
+   */
+  std::string format(const uint32_t number);
 }  // namespace bf
 
 /**

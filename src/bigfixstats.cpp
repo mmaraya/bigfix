@@ -45,9 +45,9 @@ ComputerGroup::ComputerGroup(const std::string name) {
 uint8_t ComputerGroup::widest() const {
   uint8_t top {0};
   uint8_t name = name_.length();
-  uint8_t current = format(current_).length();
-  uint8_t target = format(target_).length();
-  uint8_t percent = format(this->percent()).length() + 2;
+  uint8_t current = bf::format(current_).length();
+  uint8_t target = bf::format(target_).length();
+  uint8_t percent = bf::format(this->percent()).length() + 2;
   std::vector<uint8_t> vector = {name, current, target, percent};
   for (auto it : vector) {
     if (it > top) {
@@ -76,7 +76,7 @@ uint32_t ComputerGroup::current() const {
 }
 
 std::string ComputerGroup::formatted_current() const {
-  std::string output = format(current_);
+  std::string output = bf::format(current_);
   return output + std::string(this->widest() - output.length() + 1, ' ');
 }
 
@@ -85,7 +85,7 @@ uint32_t ComputerGroup::target() const {
 }
 
 std::string ComputerGroup::formatted_target() const {
-  std::string output = format(target_);
+  std::string output = bf::format(target_);
   return output + std::string(this->widest() - output.length() + 1, ' ');
 }
 
@@ -118,7 +118,7 @@ void ComputerGroup::set_target(uint32_t target) {
  *  @details format the supplied number into comma-separated groupings since
  *           there apparently is no portable way of doing this
  */
-std::string ComputerGroup::format(uint32_t number) const {
+std::string bf::format(const uint32_t number) {
   std::string output = std::to_string(number);
   if (output.length() > 3) {
     for (int i = static_cast<int>(output.length() - 3); i > 0; i -= 3) {
@@ -274,11 +274,11 @@ void display(std::string filename, std::map<std::string, uint32_t>* raw,
     raw_total += cg.second;
     if (cg.first != "CBS" && cg.first != "HCHB") {
       raw_display[0] += cg.first + " || ";
-      raw_display[1] += std::to_string(cg.second) + " | ";
+      raw_display[1] += bf::format(cg.second) + " | ";
     }
   }
   raw_display[0] += "TOTAL ||";
-  raw_display[1] += std::to_string(raw_total) + " |";
+  raw_display[1] += bf::format(raw_total) + " |";
   printf("%s\n%s\n\n", raw_display[0].c_str(), raw_display[1].c_str());
   // compute final totals
   uint32_t current_total {0}, target_total {0};
