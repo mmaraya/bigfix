@@ -259,12 +259,6 @@ void loadCurrent(std::string filename, std::map<std::string, uint32_t>* raw,
 }
 
 /**
- *  @details Display date, computer group numbers and total
- */
-void history(std::string date, std::vector<ComputerGroup>* groups) {
-}
-
-/**
  *  @details Display computer group, current, target and percentage
  */
 void display(std::map<std::string, uint32_t>* raw,

@@ -200,13 +200,6 @@ void loadCurrent(std::string filename, std::map<std::string, uint32_t>* raw,
                  std::vector<ComputerGroup>* final);
 
 /**
- *  @brief Display output for deployment history
- *  @param date date of this snapshot
- *  @param groups collection of computer groups
- */
-void history(std::string date, std::vector<ComputerGroup>* groups);
-
-/**
  *  @brief Display output for pasting into Confluence
  *  @param raw collection of raw computer group deployment counts
  *  @param final collection of computer groups with finalized counts
