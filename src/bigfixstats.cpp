@@ -261,8 +261,10 @@ void loadCurrent(std::string filename, std::map<std::string, uint32_t>* raw,
 /**
  *  @details Display computer group, current, target and percentage
  */
-void display(std::string date, std::map<std::string, uint32_t>* raw,
+void display(std::string filename, std::map<std::string, uint32_t>* raw,
              std::vector<ComputerGroup>* final) {
+  // extract date from filename
+  std::string date = filename.substr(0, 0);
   // compute raw totals
   uint32_t raw_total {0};
   for (auto cg : *raw) {

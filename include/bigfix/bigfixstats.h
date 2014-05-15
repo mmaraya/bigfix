@@ -176,6 +176,12 @@ namespace bf {
 
   /** delimiter for deployment targets file */
   const std::string kDelim {","};
+
+  /** extension of deployment status file */
+  const std::string kExt {".html"};
+
+  /** format of the date field embedded in the deployment status file name */
+  const std::string kDate {"yyyymmdd"};
 }  // namespace bf
 
 /**
@@ -201,11 +207,11 @@ void loadCurrent(std::string filename, std::map<std::string, uint32_t>* raw,
 
 /**
  *  @brief Display output for pasting into Confluence
- *  @param date date of raw deployment counts
+ *  @param filename name of the file containing raw deployment counts
  *  @param raw collection of raw computer group deployment counts
  *  @param final collection of computer groups with finalized counts
  */
-void display(std::string date, std::map<std::string, uint32_t>* raw,
+void display(std::string filename, std::map<std::string, uint32_t>* raw,
              std::vector<ComputerGroup>* final);
 
 #endif  // BIGFIX_BIGFIXSTATS_H_
