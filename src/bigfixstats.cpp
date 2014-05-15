@@ -277,6 +277,8 @@ void display(std::string filename, std::map<std::string, uint32_t>* raw,
       raw_display[1] += std::to_string(cg.second) + " | ";
     }
   }
+  raw_display[0] += "TOTAL ||";
+  raw_display[1] += std::to_string(raw_total) + " |";
   printf("%s\n%s\n\n", raw_display[0].c_str(), raw_display[1].c_str());
   // compute final totals
   uint32_t current_total {0}, target_total {0};
