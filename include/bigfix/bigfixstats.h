@@ -201,10 +201,11 @@ void loadCurrent(std::string filename, std::map<std::string, uint32_t>* raw,
 
 /**
  *  @brief Display output for pasting into Confluence
+ *  @param date date of raw deployment counts
  *  @param raw collection of raw computer group deployment counts
  *  @param final collection of computer groups with finalized counts
  */
-void display(std::map<std::string, uint32_t>* raw,
+void display(std::string date, std::map<std::string, uint32_t>* raw,
              std::vector<ComputerGroup>* final);
 
 #endif  // BIGFIX_BIGFIXSTATS_H_

@@ -176,7 +176,7 @@ int main(int argc, const char * argv[]) {
   std::vector<ComputerGroup> final;
   loadTarget(target_file, &final);
   loadCurrent(current_file, &raw, &final);
-  display(&raw, &final);
+  display(current_file, &raw, &final);
 }
 
 /**
@@ -261,9 +261,14 @@ void loadCurrent(std::string filename, std::map<std::string, uint32_t>* raw,
 /**
  *  @details Display computer group, current, target and percentage
  */
-void display(std::map<std::string, uint32_t>* raw,
+void display(std::string date, std::map<std::string, uint32_t>* raw,
              std::vector<ComputerGroup>* final) {
   // compute raw totals
+  uint32_t raw_total {0};
+  for (auto cg : *raw) {
+    raw_total += cg.second;
+  }
+  // display raw results
   // compute final totals
   uint32_t current_total {0}, target_total {0};
   for (auto cg : *final) {
