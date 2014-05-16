@@ -192,9 +192,9 @@ void usage();
 /**
  *  @brief Load target information from file
  *  @param filename input file containing deployment targets
- *  @param groups collection of computer groups
+ *  @param final collection of computer groups
  */
-void loadTarget(std::string filename, std::vector<ComputerGroup>* groups);
+void loadTarget(std::string filename, std::vector<ComputerGroup>* final);
 
 /**
  *  @brief Load current information from file
