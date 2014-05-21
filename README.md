@@ -1,7 +1,7 @@
 BigFix Utilities [![Build Status](https://travis-ci.org/mmaraya/bigfix.png?branch=master)](https://travis-ci.org/mmaraya/bigfix)
 ================
 
-This repository contains a collection of custom IBM BigFix utilities written in C++.
+This repository contains a collection of custom IBM BigFix utilities written in C++, Python and BigFix relevance.
 
 Supported Platforms
 -------------------
