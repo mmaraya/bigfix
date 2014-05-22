@@ -291,10 +291,10 @@ void display(std::string filename, std::map<std::string, uint32_t>* raw,
   total.set_target(target_total);
   final->push_back(total);
   // populate rows
-  std::string header = "|| Nodes       || ";
-  std::string current = "| *Current*    | ";
-  std::string target = "| *Target*     | ";
-  std::string percent = "| *% Comp*     | ";
+  std::string header = "|| Nodes    || ";
+  std::string current = "| *Current* | ";
+  std::string target = "| *Target*  | ";
+  std::string percent = "| *%Comp*   | ";
   // display results
   for (auto cg : *final) {
     header += cg.formatted_name() + " || ";
