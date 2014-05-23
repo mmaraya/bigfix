@@ -267,7 +267,7 @@ void display(std::string filename, std::map<std::string, uint32_t>* raw,
   size_t begin = filename.length() - bf::kExt.length() - bf::kDate.length();
   std::string date = filename.substr(begin, bf::kDate.length());
   // store raw results
-  std::string raw_display[2] {"||   Date   || ", "|  " + date + "  | "};
+  std::string raw_display[2] {"||  Date  || ", "| " + date + " | "};
   // compute raw totals
   uint32_t raw_total {0};
   for (auto cg : *raw) {
